@@ -2,8 +2,11 @@ import React, { useState, useEffect, useRef } from "react";
 import Carousel from "react-bootstrap/Carousel";
 import $ from "jquery";
 import { useSwipeable } from "react-swipeable";
-//import Toast from "react-bootstrap/Toast";
+import Toast from "react-bootstrap/Toast";
 import { useHistory } from "react-router-dom";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
+import Container from "react-bootstrap/Container";
 
 var rightSwipes = 0;
 function ShowCarousal(props) {
@@ -53,10 +56,11 @@ const DivCarousal = (props) => {
 		onSwiped: (eventData) => {
 			//alert(eventData.dir);
 			if (eventData.dir === "Left" || eventData.dir === "Right") {
+				props.onSwiped(eventData.dir);
 				$(eventData.event.target)
 					.parent()
 					.slideUp(100, function () {
-						if ($(this).siblings().length == 0) {
+						if ($(this).siblings().length == 1) {
 							$(this).remove();
 							props.finished();
 						} else {
@@ -82,6 +86,7 @@ const DivCarousal = (props) => {
 export default function Home() {
 	const [listItems, setListItems] = useState([]);
 	let history = useHistory();
+	let toast = useRef(null);
 	const fetchData = async () => {
 		const result = await fetch(`./images.json`);
 		const data = await result.json();
@@ -108,7 +113,33 @@ export default function Home() {
 				}
 				rightSwipes = 0;
 			}}
+			onSwiped={(dir) => {
+				if (dir === "Left") {
+					toast.current.style.backgroundColor = "#f00";
+				} else if (dir === "Right") {
+					toast.current.style.backgroundColor = "#0f0";
+				}
+				setTimeout(() => {
+					if (toast.current == null) return;
+					toast.current.style.backgroundColor = "";
+				}, 500);
+			}}
 		/>
 	));
-	return <div className="Home">{listItems.length && carousal}</div>;
+	return (
+		<div className="Home">
+			{listItems.length && carousal}
+			<Container style={{ position: "absolute", bottom: 20 }}>
+				<Row>
+					<Col xs={{ order: 4 }}>
+						<Toast ref={toast}>
+							<Toast.Body>
+								Swipe right if you like the photo, left if you don't
+							</Toast.Body>
+						</Toast>
+					</Col>
+				</Row>
+			</Container>
+		</div>
+	);
 }
