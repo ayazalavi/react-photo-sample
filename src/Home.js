@@ -59,12 +59,12 @@ const DivCarousal = (props) => {
 				props.onSwiped(eventData.dir);
 				$(eventData.event.target)
 					.parent()
-					.slideUp(100, function () {
+					.fadeOut(1000, function () {
 						if ($(this).siblings().length == 1) {
 							$(this).remove();
 							props.finished();
 						} else {
-							$(this).next().removeClass("d-none").addClass("d-block");
+							$(this).next().removeClass("d-none").addClass("box").fadeIn();
 							$(this).remove();
 						}
 					});
@@ -103,7 +103,7 @@ export default function Home() {
 		<DivCarousal
 			image={number}
 			key={index}
-			class={index == 0 ? "d-block w-100 h-100" : "d-none w-100 h-100"}
+			class={index == 0 ? "box w-100 h-100" : "d-none w-100 h-100"}
 			finished={() => {
 				if (rightSwipes >= 5) {
 					//alert("go to next page");
