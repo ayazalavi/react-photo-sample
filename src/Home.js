@@ -114,6 +114,7 @@ export default function Home() {
 				rightSwipes = 0;
 			}}
 			onSwiped={(dir) => {
+				if (toast.current == null) return;
 				if (dir === "Left") {
 					toast.current.style.backgroundColor = "#f00";
 				} else if (dir === "Right") {
